@@ -28,6 +28,8 @@ module Data.Functor.Apply (
   -- * Wrappers
   , WrappedApplicative(..)
   , MaybeApply(..)
+  , (<.*>)
+  , (<*.>)
   ) where
 
 import Data.Functor
@@ -55,3 +57,15 @@ infixl 4 $>
 ($>) = flip (<$)
 
 #endif
+
+-- | Apply a non-empty container of functions to a possibly-empty-with-unit container of values.
+(<.*>) :: (Apply f) => f (a -> b) -> MaybeApply f a -> f b
+ff <.*> MaybeApply (Left fa) = ff <.> fa
+ff <.*> MaybeApply (Right a) = ($ a) <$> ff
+infixl 4 <.*>
+
+-- | Apply a possibly-empty-with-unit container of functions to a non-empty container of values.
+(<*.>) :: (Apply f) => MaybeApply f (a -> b) -> f a -> f b
+MaybeApply (Left ff) <*.> fa = ff <.> fa
+MaybeApply (Right f) <*.> fa = f <$> fa
+infixl 4 <*.>
