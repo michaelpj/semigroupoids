@@ -28,10 +28,7 @@ import Control.Applicative
 import Data.Semigroup
 #endif
 import Data.Semigroup.Traversable.Class
-import Data.Functor.Apply
-#if __GLASGOW_HASKELL__ < 710
-import Data.Traversable
-#endif
+import Data.Functor.Bind.Class
 
 -- | Default implementation of 'foldMap1' given an implementation of 'Traversable1'.
 foldMap1Default :: (Traversable1 f, Semigroup m) => (a -> m) -> f a -> m
@@ -48,6 +45,3 @@ foldMap1Default f = getConst . traverse1 (Const . f)
 -- > instance Foldable1 Foo where
 -- >   foldMap1 = foldMap1Default
 
--- | Traverse a 'Traversable' using 'Apply', getting the results back in a 'MaybeApply'.
-traverse1Maybe :: (Traversable t, Apply f) => (a -> f b) -> t a -> MaybeApply f (t b)
-traverse1Maybe f = traverse (MaybeApply . Left . f)
